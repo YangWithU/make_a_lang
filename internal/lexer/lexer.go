@@ -1,12 +1,16 @@
 package lexer
 
+import (
+	token "make_a_lang/internal/token"
+)
+
 type Lexer struct {
-	input string
-	position int
-	readPosition int // always == position + 1
-	ch byte // current character
-	line int
-	column int
+	input        string
+	position     int
+	readPosition int  // always == position + 1
+	ch           byte // current character
+	line         int
+	column       int
 }
 
 // core function to read the next character and advance the positions
@@ -66,10 +70,58 @@ func skipComment(l *Lexer) {
 	}
 }
 
-func NextToken(l *Lexer) Token {
+func (l *Lexer) newToken(tokenType token.TokenType, ch byte) token.Token {
+	return token.Token{Type: tokenType, Literal: string(ch), Line: l.line, Column: l.column}
+}
+
+func NextToken(l *Lexer) token.Token {
 	skipWhitespace(l)
 	skipComment(l)
-	// TODO
+
+	switch l.ch {
+	case '+':
+		return l.newToken(token.PLUS, l.ch)
+	case '-':
+		return l.newToken(token.MINUS, l.ch)
+	case '*':
+		return l.newToken(token.ASTERISK, l.ch)
+	case '/':
+		return l.newToken(token.SLASH, l.ch)
+	case '(':
+		return l.newToken(token.LPAREN, l.ch)
+	case ')':
+		return l.newToken(token.RPAREN, l.ch)
+	case '{':
+		return l.newToken(token.LBRACE, l.ch)
+	case '}':
+		return l.newToken(token.RBRACE, l.ch)
+	case ',':
+		return l.newToken(token.COMMA, l.ch)
+	case ';':
+		return l.newToken(token.SEMICOLON, l.ch)
+	case '<':
+		return l.newToken(token.LT, l.ch)
+	case '>':
+		return l.newToken(token.GT, l.ch)
+	case 0:
+		return l.newToken(token.EOF, byte(0))
+
+	case '=':
+		if peekChar(l) == '=' {
+			ch := l.ch
+			l.readChar()
+			return token.Token{Type: token.EQ, Literal: string(ch) + string(l.ch), Line: l.line, Column: l.column - 1}
+		}
+		return l.newToken(token.ASSIGN, l.ch)
+
+	case '!':
+		if peekChar(l) == '=' {
+			ch := l.ch
+			l.readChar()
+			return token.Token{Type: token.NOT_EQ, Literal: string(ch) + string(l.ch), Line: l.line, Column: l.column - 1}
+		}
+	// TODO: handle string literals, identifiers, and numbers
+	}
 }
 
 func NewLexer(input string) *Lexer {
