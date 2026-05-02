@@ -9,7 +9,8 @@ func TestLookupIdent(t *testing.T) {
 		input    string
 		expected TokenType
 	}{
-		{"fn", FUNCTION},
+		{"fun", FUNCTION},
+		{"fn", IDENT},
 		{"let", LET},
 		{"true", TRUE},
 		{"false", FALSE},
@@ -21,7 +22,7 @@ func TestLookupIdent(t *testing.T) {
 		// 非关键字测试
 		{"x", IDENT},
 		{"foobar", IDENT},
-		{"function", IDENT}, // "function" 不是关键字，我们的关键字是 "fn"
+		{"function", IDENT}, // "function" 不是关键字，我们的关键字是 "fun"
 	}
 
 	for _, tt := range tests {

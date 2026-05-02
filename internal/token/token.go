@@ -5,8 +5,14 @@ type TokenType string
 type Token struct {
 	Type    TokenType
 	Literal string
-	Line    int
-	Column  int
+
+	Line   int // 起始行（1-based，包含）
+	Column int // 起始列（1-based，包含）
+
+	EndLine     int // 终止行（1-based，尾后，不包含）
+	EndColumn   int // 终止列（1-based，尾后，不包含）
+	StartOffset int // 起始偏移（0-based，包含）
+	EndOffset   int // 终止偏移（0-based，尾后，不包含）
 }
 
 const (
@@ -52,7 +58,7 @@ const (
 )
 
 var keywords = map[string]TokenType{
-	"fn":     FUNCTION,
+	"fun":    FUNCTION,
 	"let":    LET,
 	"true":   TRUE,
 	"false":  FALSE,
